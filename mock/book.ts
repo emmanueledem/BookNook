@@ -12,6 +12,20 @@ export const books: Book[] = [
     category: 'Self Improvement',
     description:
       'Atomic Habits provides practical strategies for building good habits and breaking bad ones.',
+    reviewList: [
+      {
+        id: '1',
+        user: 'John',
+        rating: 5,
+        comment: 'Fantastic read!',
+      },
+      {
+        id: '2',
+        user: 'Sarah',
+        rating: 4,
+        comment: 'Very insightful.',
+      },
+    ],
   },
   {
     id: '2',
@@ -24,6 +38,20 @@ export const books: Book[] = [
     category: 'Productivity',
     description:
       'Deep Work teaches you how to focus without distraction and produce high-quality work.',
+    reviewList: [
+      {
+        id: '1',
+        user: 'John',
+        rating: 5,
+        comment: 'Fantastic read!',
+      },
+      {
+        id: '2',
+        user: 'Sarah',
+        rating: 4,
+        comment: 'Very insightful.',
+      },
+    ],
   },
   {
     id: '3',
@@ -35,6 +63,7 @@ export const books: Book[] = [
     image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f',
     category: 'Finance',
     description: 'Timeless lessons about wealth, greed, and happiness.',
+    reviewList: [],
   },
   {
     id: '4',
@@ -46,6 +75,7 @@ export const books: Book[] = [
     image: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d',
     category: 'Programming',
     description: 'One of the best books every software engineer should read.',
+    reviewList: [],
   },
   {
     id: '5',
@@ -57,7 +87,22 @@ export const books: Book[] = [
     image: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353',
     category: 'Programming',
     description: 'A handbook of agile software craftsmanship.',
+    reviewList: [
+      {
+        id: '1',
+        user: 'John',
+        rating: 5,
+        comment: 'Fantastic read!',
+      },
+      {
+        id: '2',
+        user: 'Sarah',
+        rating: 4,
+        comment: 'Very insightful.',
+      },
+    ],
   },
+
   {
     id: '6',
     title: 'Rich Dad Poor Dad',
@@ -68,5 +113,19 @@ export const books: Book[] = [
     image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc',
     category: 'Finance',
     description: 'A personal finance classic that challenges traditional beliefs about money.',
+    reviewList: [
+      {
+        id: '1',
+        user: 'John',
+        rating: 5,
+        comment: 'Fantastic read!',
+      },
+      {
+        id: '2',
+        user: 'Sarah',
+        rating: 4,
+        comment: 'Very insightful.',
+      },
+    ],
   },
 ];

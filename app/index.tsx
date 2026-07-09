@@ -2,17 +2,24 @@ import { Stack, Link, router } from 'expo-router';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
-import { books } from '@/mock/book';
 import { useBookStore } from '@/store/bookStore';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, {
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { useCartStore } from '@/store/cartStore';
 
 export default function Home() {
   const {
@@ -21,6 +28,28 @@ export default function Home() {
     error,
     fetchBooks,
   } = useBookStore();
+  const [searchQuery, setSearchQuery] = useState('');
+  const addToCart = useCartStore((state) => state.addToCart);
+  const totalItems = useCartStore((state) => state.getTotalItems());
+  const filteredBooks = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    if (!query) return books;
+
+    return books.filter((book) => {
+      return (
+        book.title.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query) ||
+        book.category.toLowerCase().includes(query)
+      );
+    });
+  }, [books, searchQuery]);
+
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
 
   useEffect(() => {
@@ -35,54 +64,100 @@ export default function Home() {
     return <Text>{error}</Text>;
   }
 
-  const renderItem = ({ item }: any) => (
 
-    <Pressable
-      onPress={() => {
-        router.push({
-          pathname: '/book-details',
-          params: { id: item.id },
-        })
-      }
-      }
-      style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+  const renderItem = ({ item, index }: any) => (
 
-      <View style={styles.bookInfo}>
-        <Text numberOfLines={2} style={styles.title}>
-          {item.title}
-        </Text>
+    <Animated.View
+      style={animatedStyle}
+      entering={FadeInDown.delay(index * 70)}
+    >
+      <Pressable
+        onPressIn={() => {
+          scale.value = withSpring(0.97);
+        }}
 
-        <Text style={styles.author}>{item.author}</Text>
+        onPressOut={() => {
+          scale.value = withSpring(1);
+        }}
 
-        <View style={styles.bottomRow}>
-          <Text style={styles.price}>${item.price}</Text>
+        onPress={() => {
+          router.push({
+            pathname: '/book-details',
+            params: { id: item.id },
+          })
+        }
+        }
+        style={styles.card}>
+        <Image
+          source={item.image}
+          style={styles.image}
+          contentFit="cover"
+          transition={300}
+          cachePolicy="memory-disk"
+        />
+        <View style={styles.bookInfo}>
+          <Text numberOfLines={2} style={styles.title}>
+            {item.title}
+          </Text>
 
-          <Text style={styles.rating}>⭐ {item.rating}</Text>
+          <Text style={styles.author}>
+            {item.author}
+          </Text>
+
+          <Text style={styles.rating}>
+            ⭐ {item.rating} ({item.reviews})
+          </Text>
+
+          <View style={styles.actionRow}>
+            <Text style={styles.price}>
+              ${item.price.toFixed(2)}
+            </Text>
+
+
+            <Pressable
+              onPress={(e) => {
+                e.stopPropagation();
+                addToCart(item);
+              }}
+              style={styles.addButton}
+            >
+              <Ionicons
+                name="cart"
+                color="#fff"
+                size={18}
+              />
+
+              <Text style={styles.addButtonText}>
+                Add
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
-    </Pressable>
-
+      </Pressable>
+    </Animated.View>
   );
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: '📚 Book Nook',
-        }}
-      />
+    <SafeAreaView style={styles.container}>
 
       <View style={styles.header}>
         <Text style={styles.heading}>Discover Books</Text>
-
-        <View style={styles.cart}>
+        <Pressable
+          onPress={() => router.push('/all-cart-items')}
+          style={styles.cart}>
           <Ionicons
             name="cart-outline"
-            size={26}
-            color="#222"
+            size={28}
           />
-        </View>
+
+          {totalItems > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {totalItems}
+              </Text>
+            </View>
+          )}
+        </Pressable>
       </View>
 
       <View style={styles.searchContainer}>
@@ -91,22 +166,36 @@ export default function Home() {
           size={20}
           color="#777"
         />
-
         <TextInput
           placeholder="Search books..."
           placeholderTextColor="#999"
           style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
       </View>
 
       <FlatList
-        data={books}
+        data={filteredBooks}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          !loading ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyTitle}>
+                No books found
+              </Text>
+
+              <Text style={styles.emptySubtitle}>
+                Try searching with another keyword.
+              </Text>
+            </View>
+          ) : null
+        }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -167,13 +256,23 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: 18,
     overflow: 'hidden',
-    elevation: 2,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+
+    elevation: 4,
   },
 
   image: {
     width: '100%',
-    height: 220,
-    resizeMode: 'cover',
+    height: 240,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
   },
 
   bookInfo: {
@@ -199,14 +298,69 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  price: {
+  rating: {
+    fontSize: 15,
+    color: '#444',
+  },
+
+  emptyContainer: {
+    paddingVertical: 80,
+    alignItems: 'center',
+  },
+
+  emptyTitle: {
     fontSize: 20,
+    fontWeight: '600',
+  },
+
+  emptySubtitle: {
+    marginTop: 8,
+    color: '#666',
+  },
+
+  actionRow: {
+    marginTop: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  addButton: {
+    backgroundColor: '#4CAF50',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+
+  addButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+
+  price: {
+    fontSize: 22,
     fontWeight: '700',
     color: '#4CAF50',
   },
 
-  rating: {
-    fontSize: 15,
-    color: '#444',
+  badge: {
+    position: 'absolute',
+    right: -4,
+    top: -4,
+    backgroundColor: 'red',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  badgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700',
   },
 });

@@ -7,12 +7,13 @@ interface BookStore {
   books: Book[];
   loading: boolean;
   error: string | null;
-
+  searchQuery: string;
   fetchBooks: () => Promise<void>;
 }
 
-export const useBookStore = create<BookStore>((set) => ({
+export const useBookStore = create<BookStore>((set, get) => ({
   books: [],
+  searchQuery: '',
   loading: false,
   error: null,
 
