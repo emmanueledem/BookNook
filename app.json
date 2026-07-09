@@ -3,9 +3,11 @@
     "name": "BookNook",
     "slug": "booknook",
     "version": "1.0.0",
-
     "scheme": "booknook",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -23,23 +25,29 @@
     ],
     "experiments": {
       "typedRoutes": true,
-
       "tsconfigPaths": true
     },
-
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.emmanel-okon-rn.booknook"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.emmanel_okon_rn.booknook"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "81bdf8d5-eee3-4673-97d2-4a1689093992"
       }
     }
   }
