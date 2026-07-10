@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 
 interface CheckOutButtonProps {
     handleCheckout: () => void
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         paddingVertical: 16,
         alignItems: 'center',
+        marginBottom: Platform.OS == 'ios' ? 0 : 20,
     },
 
     checkoutText: {

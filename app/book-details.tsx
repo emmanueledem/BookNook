@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -479,23 +479,18 @@ export const styles = StyleSheet.create({
 
   footer: {
     position: 'absolute',
-
     bottom: 0,
     left: 0,
     right: 0,
-
     backgroundColor: '#fff',
-
     paddingHorizontal: 22,
-    paddingVertical: 18,
-
+    paddingTop: 18,
+    paddingBottom: Platform.OS == 'ios' ? 18 : 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 16,
@@ -503,7 +498,6 @@ export const styles = StyleSheet.create({
       width: 0,
       height: -5,
     },
-
     elevation: 18,
   },
 
