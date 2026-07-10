@@ -21,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useCartStore } from '@/store/cartStore';
 import { Snackbar } from 'react-native-paper';
+import { BookPrice } from '@/components/bookPrice';
 
 export default function Home() {
   const {
@@ -111,9 +112,7 @@ export default function Home() {
           </Text>
 
           <View style={styles.actionRow}>
-            <Text style={styles.price}>
-              ${item.price.toFixed(2)}
-            </Text>
+            <BookPrice price={item.price} />
 
 
             <Pressable
