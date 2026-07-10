@@ -1,10 +1,11 @@
 import { router, Stack } from 'expo-router';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CartItem from '@/components/CartItem';
 import { useCartStore } from '@/store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
 
 export default function CartScreen() {
     const items = useCartStore((state) => state.items);
@@ -21,9 +22,52 @@ export default function CartScreen() {
         state.getTotalPrice()
     );
 
+    const clearCart = useCartStore((state) => state.clearCart)
+
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+    const handleCheckout = async () => {
+        setIsCheckingOut(true);
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        setIsCheckingOut(false);
+
+        Alert.alert(
+            'Order Successful',
+            'Your books have been purchased successfully.',
+            [
+                {
+                    text: 'Continue Shopping',
+                    onPress: () => {
+                        clearCart();
+                        router.dismissAll();
+                        router.replace('/');
+                    },
+                },
+            ],
+        );
+    };
+
     if (items.length === 0) {
         return (
             <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <View style={styles.firstHeaderRow} >
+                        <Pressable
+                            style={styles.actionButton}
+                            onPress={() => { router.back() }}
+                        >
+                            <Ionicons
+                                name="arrow-back"
+                                size={24}
+                                color="#222"
+                            />
+                        </Pressable>
+                        <Text style={styles.heading}>All Cart Items</Text>
+                    </View>
+
+                </View>
 
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyEmoji}>🛒</Text>
@@ -43,17 +87,49 @@ export default function CartScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Pressable
-                    style={styles.actionButton}
-                    onPress={() => { router.back() }}
-                >
-                    <Ionicons
-                        name="arrow-back"
-                        size={18}
-                        color="#222"
-                    />
-                </Pressable>
-                <Text style={styles.heading}>All Cart Items</Text>
+                <View style={styles.firstHeaderRow} >
+                    <Pressable
+                        style={styles.actionButton}
+                        onPress={() => { router.back() }}
+                    >
+                        <Ionicons
+                            name="arrow-back"
+                            size={24}
+                            color="#222"
+                        />
+                    </Pressable>
+                    <Text style={styles.heading}>All Cart Items</Text>
+                </View>
+                <View>
+                    <Pressable
+                        onPress={() => {
+                            Alert.alert(
+                                'Clear Cart',
+                                'Are you sure you want to clear your cart?',
+                                [
+                                    {
+                                        text: 'Cancel',
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'Clear',
+                                        style: 'destructive',
+                                        onPress: () => {
+                                            clearCart();
+                                        },
+                                    },
+                                ],
+                                {
+                                    cancelable: true,
+                                }
+                            );
+                        }}
+                    >
+                        <Text style={styles.clearCartButton}>
+                            Clear Cart
+                        </Text>
+                    </Pressable>
+                </View>
             </View>
 
             <FlatList
@@ -85,10 +161,18 @@ export default function CartScreen() {
                     </Text>
                 </View>
 
-                <Pressable style={styles.checkoutButton}>
-                    <Text style={styles.checkoutText}>
-                        Checkout
-                    </Text>
+                <Pressable
+                    style={styles.checkoutButton}
+                    onPress={handleCheckout}
+                    disabled={isCheckingOut}
+                >
+                    {isCheckingOut ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.checkoutText}>
+                            Checkout
+                        </Text>
+                    )}
                 </Pressable>
             </View>
         </SafeAreaView>
@@ -104,14 +188,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         marginBottom: 10,
+        justifyContent: "space-between"
     },
 
     heading: {
         fontSize: 28,
         fontWeight: '700',
         color: '#111',
-        paddingLeft: 5,
+        paddingLeft: 10,
     },
+
+    firstHeaderRow: {
+        flexDirection: 'row',
+
+    },
+
     container: {
         flex: 1,
         backgroundColor: '#F7F8FA',
@@ -155,6 +246,12 @@ const styles = StyleSheet.create({
     totalLabel: {
         fontSize: 18,
         color: '#666',
+    },
+
+    clearCartButton: {
+        fontSize: 18,
+        color: '#000',
+        fontWeight: "500",
     },
 
     totalPrice: {
@@ -209,4 +306,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+
+
 });

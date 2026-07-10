@@ -20,17 +20,24 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { useCartStore } from '@/store/cartStore';
+import { Snackbar } from 'react-native-paper';
 
 export default function Home() {
   const {
     books,
     loading,
-    error,
+    loadingMore,
     fetchBooks,
+    loadMore,
   } = useBookStore();
+
+
   const [searchQuery, setSearchQuery] = useState('');
   const addToCart = useCartStore((state) => state.addToCart);
   const totalItems = useCartStore((state) => state.getTotalItems());
+  const [snackVisible, setSnackVisible] = useState(false);
+
+
   const filteredBooks = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -59,11 +66,6 @@ export default function Home() {
   if (loading) {
     return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} ><ActivityIndicator size="large" /></View>;
   }
-
-  if (error) {
-    return <Text>{error}</Text>;
-  }
-
 
   const renderItem = ({ item, index }: any) => (
 
@@ -118,6 +120,7 @@ export default function Home() {
               onPress={(e) => {
                 e.stopPropagation();
                 addToCart(item);
+                setSnackVisible(true);
               }}
               style={styles.addButton}
             >
@@ -131,6 +134,8 @@ export default function Home() {
                 Add
               </Text>
             </Pressable>
+
+
           </View>
         </View>
       </Pressable>
@@ -179,8 +184,12 @@ export default function Home() {
         data={filteredBooks}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        refreshing={loading}
+        onRefresh={fetchBooks}
         ListEmptyComponent={
           !loading ? (
             <View style={styles.emptyContainer}>
@@ -194,7 +203,24 @@ export default function Home() {
             </View>
           ) : null
         }
+        ListFooterComponent={
+          loadingMore ? (
+            <ActivityIndicator
+              style={{
+                marginVertical: 24,
+              }}
+            />
+          ) : null
+        }
       />
+      <Snackbar
+        visible={snackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        duration={2500}
+        style={styles.snackBarStyle}
+      >
+        Added to cart
+      </Snackbar>
     </SafeAreaView>
   );
 }
@@ -362,5 +388,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 11,
     fontWeight: '700',
+  },
+
+  snackBarStyle: {
+    backgroundColor: '#4CAF50',
   },
 });

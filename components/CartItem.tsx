@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CartItem as CartItemType } from '@/types';
+import { useCartStore } from '@/store/cartStore';
 
 interface Props {
     item: CartItemType;
@@ -15,6 +16,7 @@ export default function CartItem({
     onIncrease,
     onDecrease,
 }: Props) {
+    const removeItemFromCart = useCartStore((state) => state.removeFromCart);
     return (
         <View style={styles.container}>
             <Image
@@ -24,7 +26,21 @@ export default function CartItem({
                 cachePolicy="memory-disk"
             />
             <View style={styles.content}>
-                <Text style={styles.title}>{item.title}</Text>
+                <View style={styles.bookTitleRow} >
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Pressable
+                        onPress={() => { removeItemFromCart(item.id) }}
+                    >
+                        <Ionicons
+                            style={{ marginLeft: -16 }}
+
+                            name="trash"
+                            size={24}
+                            color="red"
+                        />
+                    </Pressable>
+                </View>
+
                 <Text style={styles.author}>{item.author}</Text>
                 <Text style={styles.price}>
                     ${item.price.toFixed(2)}
@@ -140,4 +156,9 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111',
     },
+
+    bookTitleRow: {
+        flexDirection: "row",
+        justifyContent: "space-between"
+    }
 });

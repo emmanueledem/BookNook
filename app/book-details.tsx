@@ -7,11 +7,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useBookStore } from '@/store/bookStore';
 import { useCartStore } from '@/store/cartStore';
 import { StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Snackbar } from 'react-native-paper';
 
 export default function BookDetails() {
   const { id } = useLocalSearchParams();
 
   const addToCart = useCartStore((state) => state.addToCart);
+  const [snackVisible, setSnackVisible] = useState(false);
 
   const book = useBookStore((state) =>
     state.books.find((book) => book.id === id),
@@ -212,7 +215,7 @@ export default function BookDetails() {
         </View>
 
         <Pressable
-          onPress={() => addToCart(book)}
+          onPress={() => { addToCart(book), setSnackVisible(true); }}
           style={styles.button}>
           <Ionicons
             name="cart"
@@ -225,6 +228,14 @@ export default function BookDetails() {
           </Text>
         </Pressable>
       </View>
+      <Snackbar
+        visible={snackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        duration={2500}
+        style={styles.snackBarStyle}
+      >
+        Added to cart
+      </Snackbar>
     </View>
   );
 }
@@ -524,4 +535,8 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 17,
   },
+  snackBarStyle: {
+    backgroundColor: '#4CAF50',
+  },
+
 });
