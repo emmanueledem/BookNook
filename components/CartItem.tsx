@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CartItem as CartItemType } from '@/types';
 import { useCartStore } from '@/store/cartStore';
+import { BookPrice } from './BookPrice';
 
 interface Props {
     item: CartItemType;
@@ -42,9 +43,9 @@ export default function CartItem({
                 </View>
 
                 <Text style={styles.author}>{item.author}</Text>
-                <Text style={styles.price}>
-                    ${item.price.toFixed(2)}
-                </Text>
+                <BookPrice price={item.price} />
+
+
 
                 <View style={styles.footer}>
                     <View style={styles.quantityContainer}>
@@ -110,6 +111,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '700',
         color: '#222',
+        flexShrink: 1
     },
 
     author: {

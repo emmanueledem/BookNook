@@ -10,6 +10,7 @@ export function BookPrice({ price }: BookPriceProps) {
     <Text
       testID="book-price"
       style={styles.price}
+
     >
       ${price.toFixed(2)}
     </Text>

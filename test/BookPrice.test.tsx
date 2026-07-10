@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { BookPrice } from '../components/bookPrice';
+import { BookPrice } from '../components/BookPrice';
 import { render } from '@testing-library/react-native';
 
 describe('BookPrice', () => {

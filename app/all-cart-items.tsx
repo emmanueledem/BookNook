@@ -6,6 +6,8 @@ import CartItem from '@/components/CartItem';
 import { useCartStore } from '@/store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import ClearCartButton from '@/components/ClearCartButton';
+import CheckOutButton from '@/components/CheckOutButton';
 
 export default function CartScreen() {
     const items = useCartStore((state) => state.items);
@@ -100,36 +102,28 @@ export default function CartScreen() {
                     </Pressable>
                     <Text style={styles.heading}>All Cart Items</Text>
                 </View>
-                <View>
-                    <Pressable
-                        onPress={() => {
-                            Alert.alert(
-                                'Clear Cart',
-                                'Are you sure you want to clear your cart?',
-                                [
-                                    {
-                                        text: 'Cancel',
-                                        style: 'cancel',
-                                    },
-                                    {
-                                        text: 'Clear',
-                                        style: 'destructive',
-                                        onPress: () => {
-                                            clearCart();
-                                        },
-                                    },
-                                ],
-                                {
-                                    cancelable: true,
-                                }
-                            );
-                        }}
-                    >
-                        <Text style={styles.clearCartButton}>
-                            Clear Cart
-                        </Text>
-                    </Pressable>
-                </View>
+                <ClearCartButton onPress={() => {
+                    Alert.alert(
+                        'Clear Cart',
+                        'Are you sure you want to clear your cart?',
+                        [
+                            {
+                                text: 'Cancel',
+                                style: 'cancel',
+                            },
+                            {
+                                text: 'Clear',
+                                style: 'destructive',
+                                onPress: () => {
+                                    clearCart();
+                                },
+                            },
+                        ],
+                        {
+                            cancelable: true,
+                        }
+                    );
+                }} />
             </View>
 
             <FlatList
@@ -161,19 +155,7 @@ export default function CartScreen() {
                     </Text>
                 </View>
 
-                <Pressable
-                    style={styles.checkoutButton}
-                    onPress={handleCheckout}
-                    disabled={isCheckingOut}
-                >
-                    {isCheckingOut ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <Text style={styles.checkoutText}>
-                            Checkout
-                        </Text>
-                    )}
-                </Pressable>
+                <CheckOutButton handleCheckout={handleCheckout} isCheckingOut={isCheckingOut} />
             </View>
         </SafeAreaView>
     );
@@ -260,18 +242,6 @@ const styles = StyleSheet.create({
         color: '#222',
     },
 
-    checkoutButton: {
-        backgroundColor: '#4CAF50',
-        borderRadius: 14,
-        paddingVertical: 16,
-        alignItems: 'center',
-    },
-
-    checkoutText: {
-        color: '#fff',
-        fontWeight: '700',
-        fontSize: 18,
-    },
 
     emptyContainer: {
         flex: 1,

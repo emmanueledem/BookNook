@@ -21,7 +21,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useCartStore } from '@/store/cartStore';
 import { Snackbar } from 'react-native-paper';
-import { BookPrice } from '@/components/bookPrice';
+import { BookPrice } from '@/components/BookPrice';
+import { AddToCartButton } from '@/components/AddToCartButton';
 
 export default function Home() {
   const {
@@ -114,27 +115,10 @@ export default function Home() {
           <View style={styles.actionRow}>
             <BookPrice price={item.price} />
 
-
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                addToCart(item);
-                setSnackVisible(true);
-              }}
-              style={styles.addButton}
-            >
-              <Ionicons
-                name="cart"
-                color="#fff"
-                size={18}
-              />
-
-              <Text style={styles.addButtonText}>
-                Add
-              </Text>
-            </Pressable>
-
-
+            <AddToCartButton onPress={() => {
+              addToCart(item);
+              setSnackVisible(true);
+            }} />
           </View>
         </View>
       </Pressable>
