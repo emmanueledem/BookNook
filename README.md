@@ -1,6 +1,6 @@
-# 📚 BookNook
+# 📚 "The Book Nook App"
 
-BookNook is a simple React Native (Expo) bookstore application built as a technical assessment. It allows users to browse books, search by title/author/category, view detailed information, manage a shopping cart, and persist cart data locally.
+The Book Nook App is a simple React Native (Expo) bookstore application built as a technical assessment. It allows users to browse books, search by title/author/category, view detailed information, manage a shopping cart, and persist cart data locally.
 
 ---
 
