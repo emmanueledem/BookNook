@@ -31,10 +31,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emmanel-okon-rn.booknook",
-      "infoPlist": {
-        "UIViewControllerBasedStatusBarAppearance": true
-      }
+      "bundleIdentifier": "com.emmanel-okon-rn.booknook"
     },
     "android": {
       "adaptiveIcon": {

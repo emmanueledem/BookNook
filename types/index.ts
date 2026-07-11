@@ -8,7 +8,6 @@ export interface Book {
   image: string;
   category: string;
   description: string;
-
   reviewList: Review[];
 }
 
